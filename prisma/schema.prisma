@@ -1,0 +1,51 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+        
+
+model Users{
+  id Int @id @default(autoincrement())
+  username String
+  email String @unique
+  password String
+  isVerified Boolean @default(false)
+  verificationCode String
+  codeExpiry DateTime 
+  testHistories   TestHistory[]  //One user can have many test histories
+}
+
+
+
+model TestHistory {
+  id          Int    @id @default(autoincrement())
+  userId      Int
+  subject     String
+  tolalMarks Int
+  score       Int
+  takenAt     DateTime @default(now())
+  user        Users @relation(fields: [userId], references: [id])
+}
+
+
+model Question{
+  id         Int    @id @default(autoincrement())
+  subject    String
+  question   String
+  options    String[] // Array of options
+  answer     String
+}
+
+model Article{
+  id     Int @id @default(autoincrement())
+  title  String
+  authorName String
+  content String
+  publishedAt DateTime @default(now())
+}
