@@ -71,8 +71,8 @@ app.post("/signup", validateInput , async ( req,res )=>{
 
         if( userExist ){
             if( userExist.isVerified ){
-                return res.json(
-                    {status:400},
+                return res.status(400).json(
+                    
                     {success:false,
                     message:"user already exist with the provided email !"}
                     
@@ -147,6 +147,8 @@ app.post("/signup", validateInput , async ( req,res )=>{
 
 
 app.post("/verify-code",async (req,res)=>{
+
+    console.log("request for code verification received! ")
     const { email, verificationCode } = req.body;
 
     //first,verify for the code expiration,if expired, return the code expired message;
@@ -189,20 +191,17 @@ app.post("/verify-code",async (req,res)=>{
                     });
                     console.log(response);
 
-                    //send the jwt;
+                    
                     const payload = { id:toString(response.id) , username:response.username };
                     const token = jwt.sign(payload,secret_key);
                     console.log("jwt",token);
-                    return res.json( {success :true, message : "verifaction successfull!", token : token, userId : response.id});
+                    return res.json( {success :true, message : "verifaction successfull!", token : token, userId : response.id,username:response.username});
                     
                     // return res.status(200).json({
                     //     status : "success",
                     //     message : "code verification successfull!"
                     // })
 
-                    
-
-                    
                 } catch (error) {
                     console.log(error);
                     return res.status(500).json({ success: false, message: "Could not verify user!" });
